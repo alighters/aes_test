@@ -42,7 +42,8 @@ static void set_char(unsigned char *bin, unsigned int binsz, char **result)
     
     for (i = 0; i < binsz; i++)
     {
-        (*result)[i] = bin[i] & 0x0F;
+//        (*result)[i] = strtoul(bin[i] & 0x0F, NULL, 16);
+        (*result)[i] = (char)(bin[i] & 0x0F);
     }
 }
 
@@ -57,53 +58,59 @@ static char* encrypt(char *msg)
     long n = strlen(msg) < 32 ? strlen(msg) : 32;
     
     strncpy(input, msg, n);
-    input[n] = '\0';
-    uint8_t in[16];
-    memset(in, 0, 16);
-   
-
     
-    for(int i = 0; i < 16; i++){
-        char *result = (char *)malloc(2 + 1 + 2);
-        strcpy(result, "0x");
-        strncat(result, &input[2*i], 2);
-        in[i] = strtoul(result, NULL, 16);
+    uint8_t in[32];
+    memset(in, 0, 32);
+   
+    for(int i = 0; i < n; i++){
+        in[i] = (uint8_t)(input[i]);
     }
 
     
     
     uint8_t key[] = {0x2b, 0x7e, 0x15, 0x16, 0x28, 0xae, 0xd2, 0xa6, 0xab, 0xf7, 0x15, 0x88, 0x09, 0xcf, 0x4f, 0x3c};
     
-    uint8_t buffer[16];
-    memset(buffer, 0, 16);
+//    uint8_t buffer[16];
+//    memset(buffer, 0, 16);
+    
+    
+//    uint8_t iv[]  = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f };
+//    uint8_t in[]  = { 0x6b, 0xc1, 0xbe, 0xe2, 0x2e, 0x40, 0x9f, 0x96, 0xe9, 0x3d, 0x7e, 0x11, 0x73, 0x93, 0x17, 0x2a,
+//        0xae, 0x2d, 0x8a, 0x57, 0x1e, 0x03, 0xac, 0x9c, 0x9e, 0xb7, 0x6f, 0xac, 0x45, 0xaf, 0x8e, 0x51,
+//        0x30, 0xc8, 0x1c, 0x46, 0xa3, 0x5c, 0xe4, 0x11, 0xe5, 0xfb, 0xc1, 0x19, 0x1a, 0x0a, 0x52, 0xef,
+//        0xf6, 0x9f, 0x24, 0x45, 0xdf, 0x4f, 0x9b, 0x17, 0xad, 0x2b, 0x41, 0x7b, 0xe6, 0x6c, 0x37, 0x10 };
+
+    uint8_t buffer[64];
+    memset(buffer, 0, 64);
+
+    
+//    AES128_CBC_encrypt_buffer(buffer, in, (unsigned int)n, key, iv);
     
     
     AES128_ECB_encrypt(in, key, buffer);
     
-    char *result;
+    char *out;
     
-    unsigned int length = n < 16 ? (unsigned int)n : 16;
+    bin_to_strhex(buffer, 16, &out);
     
-    bin_to_strhex(buffer, length, &result);
-    
-    return result;
+    return out;
 }
 
 static char* decrypt(char *msg)
 {
  
-    char input[32];
-    memset(input, 0, 32);
+    char input[128];
+    memset(input, 0, 128);
     
-    long n = strlen(msg) < 32 ? strlen(msg) : 32;
+    long n = strlen(msg);
     
     strncpy(input, msg, n);
-    input[n] = '\0';
-    uint8_t in[16];
-    memset(in, 0, 16);
+
+    uint8_t in[64];
+    memset(in, 0, 64);
     
     
-    
+    // 解密的时候， 将两位作为一位的uint_8
     for(int i = 0; i < n/2; i++){
         char *result = (char *)malloc(2 + 1 + 2);
         strcpy(result, "0x");
@@ -112,20 +119,34 @@ static char* decrypt(char *msg)
     }
     
     uint8_t key[] = {0x2b, 0x7e, 0x15, 0x16, 0x28, 0xae, 0xd2, 0xa6, 0xab, 0xf7, 0x15, 0x88, 0x09, 0xcf, 0x4f, 0x3c};
-    uint8_t buffer[16];
-    memset(buffer, 0, 16);
+    uint8_t buffer[64];
+    memset(buffer, 0, 64);
     
     AES128_ECB_decrypt(in, key, buffer);
     
-    char *result;
-    for(int i = 0; i < n/2; i ++ ){
-        printf("%.2x", buffer[i]);
+    
+    
+    int length = 0;
+    for ( int i = 64 -1 ; i > 0; i--){
+        if(buffer[i] != 0){
+            length = i +1;
+            break;
+        }
     }
-    printf("\n");
     
-//    set_char(buffer, (unsigned int)(n/2), &result);
+    if(length == 0 || length > n){
+        length = (int)n;
+    }
     
-    bin_to_strhex(buffer, (unsigned int)n/2, &result);
+    
+    
+    char *result = (char *)malloc(length + 1);
+    result[length] = 0;
+    for(int i = 0 ; i < length ; i++){
+        result[i] = (char)buffer[i];
+    }
+    
+//    set_char(buffer, (unsigned int)length, &result);
     
     return result;
 }
@@ -133,15 +154,10 @@ static char* decrypt(char *msg)
 
 int main(){
     
-    
-    
-//    printf("%s\n", encrypt("0a0b0c01020304050607080900010203"));
-//    printf("%s\n", decrypt("9ae0de5e82266daaa589570a628ab7cf"));
-    
-
-//    printf("%s\n", encrypt("6bc1bee22e409f96e93d7e117393172a"));
-//    printf("%s\n", decrypt("3ad77bb40d7a3660a89ecaf32466ef97"));
-    
     printf("%s\n", encrypt("abc"));
-    printf("%s\n", decrypt("c27d3d"));
+    printf("%s\n", decrypt("0c795a305d8c09831d7f86a5143e8e09"));
+    
+    printf("%s\n", encrypt("ggg"));
+    printf("%s\n", decrypt("842711a733cd4777a5ac3c657766fccb"));
+  
 }
