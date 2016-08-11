@@ -7,7 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		63A835541D54875F00AD3EB8 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 63A835531D54875F00AD3EB8 /* main.c */; };
+		63A8355D1D54876D00AD3EB8 /* aes.c in Sources */ = {isa = PBXBuildFile; fileRef = 63A8355A1D54876D00AD3EB8 /* aes.c */; };
+		63A8355E1D54876D00AD3EB8 /* test.c in Sources */ = {isa = PBXBuildFile; fileRef = 63A8355C1D54876D00AD3EB8 /* test.c */; };
+		63DB917B1D5B01B800868912 /* encrypt.c in Sources */ = {isa = PBXBuildFile; fileRef = 63DB91791D5B01B800868912 /* encrypt.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -24,7 +26,11 @@
 
 /* Begin PBXFileReference section */
 		63A835501D54875E00AD3EB8 /* aes_test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = aes_test; sourceTree = BUILT_PRODUCTS_DIR; };
-		63A835531D54875F00AD3EB8 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		63A8355A1D54876D00AD3EB8 /* aes.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = aes.c; sourceTree = "<group>"; };
+		63A8355B1D54876D00AD3EB8 /* aes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = aes.h; sourceTree = "<group>"; };
+		63A8355C1D54876D00AD3EB8 /* test.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = test.c; sourceTree = "<group>"; };
+		63DB91791D5B01B800868912 /* encrypt.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = encrypt.c; sourceTree = "<group>"; };
+		63DB917A1D5B01B800868912 /* encrypt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = encrypt.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,7 +63,11 @@
 		63A835521D54875E00AD3EB8 /* aes_test */ = {
 			isa = PBXGroup;
 			children = (
-				63A835531D54875F00AD3EB8 /* main.c */,
+				63A8355A1D54876D00AD3EB8 /* aes.c */,
+				63A8355B1D54876D00AD3EB8 /* aes.h */,
+				63A8355C1D54876D00AD3EB8 /* test.c */,
+				63DB91791D5B01B800868912 /* encrypt.c */,
+				63DB917A1D5B01B800868912 /* encrypt.h */,
 			);
 			path = aes_test;
 			sourceTree = "<group>";
@@ -118,7 +128,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				63A835541D54875F00AD3EB8 /* main.c in Sources */,
+				63A8355E1D54876D00AD3EB8 /* test.c in Sources */,
+				63A8355D1D54876D00AD3EB8 /* aes.c in Sources */,
+				63DB917B1D5B01B800868912 /* encrypt.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -239,6 +251,7 @@
 				63A835591D54875F00AD3EB8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
